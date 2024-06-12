@@ -157,8 +157,6 @@ func readFileWithLine(filePath string) (*map[int]string, error) {
 func sendEvents(createRequest *EventCreateRequest) error {
 	endpoint := clientOptions.Endpoint + "/events/"
 
-	fmt.Println("###############", endpoint)
-
 	u, err := url.ParseRequestURI(endpoint)
 	if err != nil {
 		return err
