@@ -2,7 +2,7 @@ package ezlog
 
 const SDK_VERSION = "0.0.1"
 
-const DEFAULT_ENDPOINT = "https//collect.ezlog.cloud/events"
+const DEFAULT_ENDPOINT = "https//collect.ezlog.cloud"
 
 type ClientOptions struct {
 	ServiceKey string

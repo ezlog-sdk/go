@@ -155,7 +155,7 @@ func readFileWithLine(filePath string) (*map[int]string, error) {
 
 // sendEvents イベントを送信
 func sendEvents(createRequest *EventCreateRequest) error {
-	endpoint := clientOptions.Endpoint
+	endpoint := clientOptions.Endpoint + "/events"
 
 	u, err := url.ParseRequestURI(endpoint)
 	if err != nil {
