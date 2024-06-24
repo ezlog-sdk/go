@@ -10,7 +10,6 @@ import (
 	"net/url"
 	"os"
 	"runtime"
-	"strings"
 )
 
 type sourceFile struct {
@@ -50,10 +49,11 @@ type EventSDK struct {
 }
 
 type EventCreateRequest struct {
-	Detail  EventDetail  `json:"detail,omitempty"`
-	Traces  []EventTrace `json:"traces,omitempty"`
-	Runtime EventRuntime `json:"runtime,omitempty"`
-	SDK     EventSDK     `json:"sdk,omitempty"`
+	Detail  EventDetail             `json:"detail,omitempty"`
+	Traces  []EventTrace            `json:"traces,omitempty"`
+	Runtime EventRuntime            `json:"runtime,omitempty"`
+	SDK     EventSDK                `json:"sdk,omitempty"`
+	Tags    *map[string]interface{} `json:"tags,omitempty"`
 }
 
 func Exception(err error, messages ...interface{}) {
@@ -66,6 +66,23 @@ func Exception(err error, messages ...interface{}) {
 		SDK: EventSDK{
 			Ver: SDK_VERSION,
 		},
+	}
+
+	// messages を解析
+	for _, message := range messages {
+		if req, ok := message.(*http.Request); ok {
+			tags := map[string]interface{}{}
+
+			scheme := "http"
+			if req.TLS != nil {
+				scheme = "https"
+			}
+			tags["requestURL"] = fmt.Sprintf("%s://%s%s", scheme, req.Host, req.RequestURI)
+			tags["requestMethod"] = req.Method
+			tags["userAgent"] = req.UserAgent()
+
+			request.Tags = &tags
+		}
 	}
 
 	for i := 2; i <= 6; i++ {
@@ -128,9 +145,8 @@ func Exception(err error, messages ...interface{}) {
 		request.Traces = append(request.Traces, trace)
 	}
 
-	request.Runtime.Platform = 1101                                       // go
-	request.Runtime.Ver = strings.Replace(runtime.Version(), "go", "", 1) // "go1.16.3" -> "1.16.3"
-
+	request.Runtime.Platform = 1101         // go
+	request.Runtime.Ver = runtime.Version() // "go1.16.3"
 	sendEvents(&request)
 }
 

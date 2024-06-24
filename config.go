@@ -1,6 +1,6 @@
 package ezlog
 
-const SDK_VERSION = "0.0.2"
+const SDK_VERSION = "0.0.3"
 
 const DEFAULT_ENDPOINT = "https://collect.ezlog.cloud/v1"
 
